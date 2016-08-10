@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>2_classes</title>
+	<script type="text/javascript">
+		// JS classes 在 ES6 中被引入，是现有的基于原型继承模式的语法糖。 class 语法并没有在 JS 中引入新的面向对象的继承方式。 JS classes 在创建对象和处理继承方面提供了更简单和清晰的语法。
+
+		// # 定义 classes
+		// 类 实际上是 特殊的函数（classes are in fact "special functions"），就像你可以定义函数表达式和函数声明一样，class 语法也有两个组件： class expression 和 class declarations。
+
+		// ## class declarations
+			// 定义 class 的一种方式就是 class declaration。要声明一个类，你可以使用 class 关键字，后面跟一个类名（本例使用 “Polygon” ）。
+			class Polygon {
+				constructor(height, width) {
+					this.height = height;
+					this.width = width;
+				}
+			}
+
+			// ### 关于声明提升
+			// 函数声明和类声明一个重要的区别是，函数声明会被提升而类声明则不会被提升。你需要首先声明自己的类，然后才能获取它，否则代码将会抛出如下 ReferenceError:
+			var p = new Polygon();  // ReferenceError
+			class Polygon {}
+
+		// ## class expressions
+			// 类表达式是另外一种定义类的方式。类表达式可以命名也可以不命名。命名的类表达式的名字只可以在类体内部访问。
+			//unnamed
+			var Polygon = class {
+				constructor(height, width) {
+					this.height = height;
+					this.width = width;
+				}
+			}
+			//named
+			var Polygon = class Polygon {
+				constructor(height, width) {
+					this.height = height;
+					this.width = width;
+				}
+			}
+
+		// # 类体和方法的定义（class body and methods definitions）
+			// 类体指的是大括号中的部分。这里是你定义类成员，例如方法或者构造器，的地方。
+
+			// ## 严格模式
+				// 类声明和类表达式的类体都以严格模式执行。
+
+			// ## 构造器
+			// 构造器方法是类创建和初始化对象的一个特殊方法。在类中只可以允许有一个特殊的名为 constructor 的方法。如果类中包含有多余一个的 constructor 方法出现的话，就会抛出 SyntaxError 错误。
+			// 构造器可以使用 super 关键字来调用父类的构造器（Constructor can use the super keyword to call the constructor of a parent class）。
+
+			// ## Prototype 方法
+			// 请在方法定义（method definitions）中查看
+			class Polygon {
+				constructor (height, width) {
+					this.height = height;
+					this.width = width;
+				}
+
+				get area() {
+					return this.calArea();
+				}
+
+				calArea() {
+					return this.height * this.width;
+				}
+			}
+
+			const square = new Polygon(10, 10);
+			console.log(square.area);
+
+			// ## 静态方法（static method）
+			// static 关键词会为一个 class 定义一个静态方法。静态方法的调用无需实例化类，但是如果类已经实例化也可以调用。静态方法通常用于为一个应用创建 utility functions。
+			class Point {
+				constructor(x, y) {
+					this.x = x;
+					this.y = y;
+				}
+
+				static distance(a, b) {
+					const dx = a.x - b.x;
+					const dy = a.y - b.y;
+
+					return Math.sqart(dx*dx + dy*dy);
+				}
+			}
+			const p1 = new Point(5, 5);
+			const p2 = new Point(10, 10);
+
+			console.log(Point.distance(p1, p2));
+
+		// # 使用 extends 创建子类（sub classing with extends）
+			// extends 关键字在类声明或者类表达式中用于创建一个类的子类。
+			class Animal {
+				constructor(name) {
+					this.name = name;
+				}
+				speak() {
+					console.log(this.name + ' makes a noise.');
+				}		
+			}
+
+			class Dog extends Animal {
+				speak() {
+					console.log(this.name + ' barks.');
+				}
+			}
+
+			// 我们也可以扩展传统的基于函数的类：
+			function Animal(name) {
+				this.name = name;
+			}
+			Animal.prototype.speak = function() {
+				console.log(this.name + ' makes a noise.');
+			}
+
+			class Dog extends Animal {
+				speak() {
+					super.speak();
+					console.log(this.name + ' barks.');
+				}
+			}
+
+			var d = new Dog('Mitzie');
+			d.speak();
+
+		// # 物种（species）
+			// 你也许希望你自定义的数组扩展类 MyArray 中返回一个 Array 对象。物种模式可以让你覆盖掉默认的构造器。
+			// 例如，当使用诸如 map() 这样返回默认构造器的方法时，你希望这些方法可以返回一个父级的 Array 对象，而不是 MyArray 对象。Symblo.species 符号可以允许你这样做：
+			class MyArray extends Array {
+				// Overwrite species to the parent Array constructor
+				static get [symbol.species]() { return Array; }
+			}
+			var a = new MyArray(1, 2, 3);
+			var mapped = a.map(x => x * x);
+
+			console.log(mapped instanceof MyArray);   //false
+			console.log(mapped instanceof Array);     //true
+
+		// # 父类使用 super 关键字调用
+			// super 关键字用于调用父类的函数
+			class Cat {
+				constructor(name) {
+					this.name = name;
+				}
+
+				speak() {
+					console.log(this.name + ' makes a noise.');
+				}
+			}
+
+			class Lion extends Cat {
+				speak() {
+					super.speak();
+					console.log(this.name + ' roars.');
+				}
+			}
+
+		// # Mix-ins
+			// 抽象的子类或者 mix-ins 是类的模板（Abstract subcalsses or mix-ins are templates for classes）。ECMAScript 类智能拥有一个父类，所以，从工具类的各个继承是不可能的（ multiple inheritance from tooling classes is not possible）。功能必须由父类提供。
+			// A function with a superclass as input and a subclass extending that superclass as output can be used to implement mix-ins in ECMAScript:
+
+			var CalculatorMixin = Base => class extends Base {
+				clac() { }
+			};
+
+			var RandomizerMixin = Base => class extends Base {
+				randomizer() { }
+			};
+
+			// A class that uses these mix-ins can then be written like this:
+			class Foo { }
+			class Bar extends CalculatorMixin(RandomizerMixin(Foo)) { }
+
+			//--steam comment-- 关于 mix-in 这部分没有看懂！！
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
