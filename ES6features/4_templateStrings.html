@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>4_templateStrings</title>
+	<script type="text/javascript">
+		// 模板字面量是允许嵌入表达式的字符串字面量。你可以对他们使用多行字符串和字符串插入的特点。在 ES6 这个版本之前，他们被称为模板字符串（template strings）。
+
+		// # 语法
+		`string text`
+
+		`string text line 1
+		 string text line 2`
+
+		 `string text ${expression} string text`
+
+		 tag `string text ${expression} string text`
+
+		 // # 描述
+			 // 模板字面量由符号 `` 所包裹，而并不是由单引号或者双引号包裹（注：符号 `` 通常在键盘左上角 esc 下面，必须是英文输入法的情况下）。模板字面量可以包含占位符（place holder）。占位符由美元符号和大括号所表示（${expression}）。占位符中间的表达式和占位符之间的文字会被传入到一个函数中。默认情况下的函数会将这几个部分连接成一个独立的字符串。如果在模板字面量前面有一个表达式（这里被称为标签），那么这个模板字符串就被称为“标签模板字面量”。在这种情况下，标签表达式（通常是一个函数）会被模板字面量调用，在输出之前你可以进行操作。要想书写符号 ` ，你可以在 ` 前面使用 \。
+			 `\`` ==="`"  //true
+
+			 // ## 多行字符串
+				 // 任何一行插入源码的新的字符都会成为模板字面量的一部分。使用普通的字符串，为了输出多行文字你必须使用下面所示的语法：
+				 console.log("string text line 1\n" +
+				 "string text line 2");
+				 // "string text line 1
+				 // string text line 2"
+				 // 要想获得同样的多行字符串的效果，你现在可以这样书写：
+				 console.log(`string text line 1
+				 string text line 2`);
+				 // "string text line 1
+				 // string text line 2"
+			// ## 表达式插入
+				// 为了能够在普通字符串中嵌入表达式，你可能会使用下面的语法：
+				var a = 5;
+				var b = 10;
+				console.log("Fifteen is " + (a + b) + " and\nnot " + (2 * a + b) + ".");
+				// "Fifteen is 15 and
+				// not 20."
+				// 现在使用模板字面量，你可以使用语法糖来替代上面的写法，让代码可读性更强：
+				var a = 5;
+				var b = 10;
+				console.log("Fifteen is ${a + b} and\nnot ${2 * a + b}");
+				// "Fifteen is 15 and
+				// not 20."
+			// ## 标签模板字面量
+				//模板字面量更高级的一种形式就是”标签模板字面量“。使用标签模板字面量，你可以通过使用函数来修改模板字面量的输出结果。函数的第一个参数是字符串字面量所组成的数组（本例中是 "hello", "world" 以及 ""）。第二个参数，也就是第一个参数后面的所有参数，是所拥有的值（有时也被叫做 cooked）的替代表达式（本例中是 "15" 和 "50"）。最后你的函数将会返回你所操作的字符串。下面的例子中，tag 这个名字没有任何其他的特殊含义。函数名可以是任何你想要得名字。
+				var a = 5;
+				var b = 10;
+				function tag(strings, ...values) {
+					console.log(strings[0]);  // "Hello "
+					console.log(strings[1]);  // " world "
+					console.log(strings[2]);  // ""
+					console.log(values[0]);  // 15
+					console.log(values[1]);  // 50
+
+					return "Bazinga!"
+				}
+
+				tag`Hello ${ a + b }` world ${ a * b };
+				// "Bazinga!"
+				// tag 函数不一定非要返回一个字符串，如下所示：
+				function template(strings, ...keys) {
+				  return (function(...values) {
+				    var dict = values[values.length - 1] || {};
+				    var result = [strings[0]];
+				    keys.forEach(function(key, i) {
+				      var value = Number.isInteger(key) ? values[key] : dict[key];
+				      result.push(value, strings[i + 1]);
+				    });
+				    return result.join('');
+				  });
+				}
+
+				var t1Closure = template`${0}${1}${0}!`;
+				t1Closure('Y', 'A');  // "YAY!" 
+				var t2Closure = template`${0} ${'foo'}!`;
+				t2Closure('Hello', {foo: 'World'});  // "Hello World!"
+			// ## 原生字符串（raw strings）
+				// 标签模板字面量函数的第一个参数可以访问一个特殊的 raw 属性，这个 raw 属性允许你被输入的 raw strings。
+				function tag(strings, ...values) {
+					console.log(strings.raw[0]);
+					// "string text line 1 \n string text line 2"
+				}
+				tag`string text line 1 \n string text line 2`;
+				// 另外，String.raw() 方法用于创建原始字符串就像默认的模板函数和字符串拼接那样。
+				String.raw`Hi\n${2+3}!`;
+				// "Hi\n5!"
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
