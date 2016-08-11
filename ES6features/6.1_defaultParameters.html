@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>6.1_defaultParameters</title>
+	<script type="text/javascript">
+		// 默认的函数参数允许正式的参数拥有一个初始化的默认值，如果参数没有传入值或者传入的是 undefined 的时候。
+		// # 语法
+		function [name]([param1[ = defaultValue1 ][,..., paramN=[ defaultValueN ]]]) {
+			statements
+		}
+		// # 描述
+		// 在 JS 中，函数参数的默认是 undefined。然而有些时候，设置一个非 undefined 的默认值是非常有用的。这就是默认值产生作用的地方。
+		// 过去，设置默认值的策略主要是，测试函数体中参数值是否为 undefined，如果是则赋值。下面的例子中，如果调用函数的时候 b 没有赋值，它的默认值就是 undefined 当测试 a#b 的时候，而且 multiply 函数的返回值会是 NaN。然而，本例中第二行会纠正这个问题。
+
+		function multiply(a, b) {
+			var b = typeofb == 'undefined' ? b : 1;
+			return a*b;
+		}
+		multily(5); // 5
+		// 有了 ES6 的默认参数，函数体测试就不再需要了。现在，你可以直接在函数的头部将 1 作为默认值传给函数的参数 b。
+		function multiply(a, b=1) {
+			return a*b;
+		}
+		multiply(5); // 5
+		// # 例子
+			// ## 传入 undefined
+			// 下面例子中，函数第二次调用的时候，即使调用的时候，第二个参数被显式的赋值为 undefined（尽管不是 null），color 参数的值依然是默认值。
+			function setBackgroundColor(element, color = "rosybrown") {
+				element.style.setBackgroundColor = color;
+			}
+
+			setBackgroundColor(someDiv);        // color set to 'rosybrouwn'
+			setBackgroundColor(someDiv, undefined);        // color set to 'rosybrouwn' two
+			setBackgroundColor(someDiv, 'blue');        // color set to 'blue'
+
+			// ## 调用的时候再进行评估
+			// 默认值只有在函数调用的时候才进行评估，就像 Python 中的 e.g，每次函数调用的时候才会创建一个新的对象。
+			function append(value, array = []) {
+				array.push(value);
+				return array;
+			}
+
+			append(1); // [1]
+			append(2); // [2], not [1, 2]
+
+			// 这同样适用于函数和变量：
+			function callSomething(thing = something()) {
+				return thing;
+			}
+			function something() {
+				return "sth";
+			}
+			callSomething(); // sth
+
+			// ## 默认参数可以在之后的默认参数中获取到
+			function singularAutoPlural(singular, plural = singlar + "s", rallyingCry = plurar + "ATTACH!!!") {
+				return [singular, plurar, rallyingCry];
+			}
+			//["Gecko","Geckos", "Geckos ATTACK!!!"]
+			singularAutoPlural("Gecko");
+
+			//["Fox","Foxes", "Foxes ATTACK!!!"]
+			singularAutoPlural("Fox","Foxes");
+
+			//["Deer", "Deer", "Deer ... change."]
+			singularAutoPlural("Deer", "Deer", "Deer peaceably and respectfully petition the government for positive change.")
+
+			// This functionality is approximated in a straight forward fashion and demonstrates how many edge cases are handled.
+			function go() {
+			  return ":P"
+			}
+
+			function withDefaults(a, b = 5, c = b, d = go(), e = this, 
+			                      f = arguments, g = this.value) {
+			  return [a,b,c,d,e,f,g];
+			}
+			function withoutDefaults(a, b, c, d, e, f, g){
+			  switch(arguments.length){
+			    case 0:
+			      a
+			    case 1:
+			      b = 5
+			    case 2:
+			      c = b
+			    case 3:
+			      d = go();
+			    case 4:
+			      e = this
+			    case 5:
+			      f = arguments
+			    case 6:
+			      g = this.value;
+			    default:
+			  }
+			  return [a,b,c,d,e,f,g];
+			}
+
+			withDefaults.call({value:"=^_^="});
+			// [undefined, 5, 5, ":P", {value:"=^_^="}, arguments, "=^_^="]
+
+			withoutDefaults.call({value:"=^_^="});
+			// [undefined, 5, 5, ":P", {value:"=^_^="}, arguments, "=^_^="]
+
+			// ## 函数体内部定义的函数
+			// Introduced in Gecko 33 (Firefox 33 / Thunderbird 33 / SeaMonkey 2.30). 函数体内部定义的函数无法被默认参数引用，会抛出 ReferenceError 的错误(currently a TypeError in SpiderMonkey, see bug 1022967)。默认参数永远首先执行，然后才会评估函数体内的函数声明。
+			// Don't work! Throw ReferenceError.
+			function f(a = go()) {
+				function go(){return ":P"}
+			}
+
+			// ## 默认参数后的参数没有默认值
+			// Prior to Gecko 26 (Firefox 26 / Thunderbird 26 / SeaMonkey 2.23 / Firefox OS 1.2), the following code resulted in a SyntaxError. This has been fixed in bug 777060 and works as expected in later versions:
+			function f(x=1, y) { 
+			  return [x, y]; 
+			}
+
+			f(); // [1, undefined]
+
+			// ## 拥有默认赋值的解构参数
+			// You can use default value assignment with the destructuring assignment notation:
+			function f([x, y] = [1, 2], {z: z} = {z: 3}) { 
+			  return x + y + z; 
+			}
+
+			f(); // 6
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
