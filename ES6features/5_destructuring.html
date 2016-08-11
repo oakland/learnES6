@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>5_destructuring</title>
+	<script type="text/javascript">
+		// 解构允许使用模式匹配绑定，支持数组和对象匹配。解构工作可靠但是性能却下降，类似于标准的对象查找 foo["bar"]，如果没有找到的话会返回 undefined。
+
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
+		// 解构赋值语法是一种 JS 表达式，这种表达式使得从数组或者对象中抽取出数据成为不同的变量成为一种可能。
+
+		// # 语法
+			var a, b, rest;
+			[a, b] = [1, 2]
+			console.log(a); // 1
+			console.log(a); // 2
+
+			[a, b, ...rest] = [1, 2, 3, 4, 5]
+			console.log(a); // 1
+			console.log(b); // 2
+			console.log(rest); // [3, 4, 5]
+
+			({a, b} = {a:1, b:2})
+			console.log(a); // 1
+			console.log(b); // 2
+
+			({a, b, ...rest} = {a:1, b:2, c:3, d:4});
+			// ES7 - not implemented in Firefox 47a01
+
+		// # 描述
+			// 对象和数组提供了一种创建特殊信息组团的简单方式。
+			var x = [1, 2, 3, 4, 5];
+			// 解构赋值使用了类似的语法，但是从赋值语句的左侧来定义从源变量中抽取出的元素。
+			var x = [1, 2, 3, 4, 5];
+			var [y, z] = x;
+			console.log(y); // 1
+			console.log(z); // 2
+			// 这种能力类似于 Perl 和 Python 语言中的所展示出的特点。
+		// # 数组解构
+			// ## 变量赋值基础
+			var foo = ["one", "two", "three"];
+
+			var [one, two, three] = foo;
+			console.log(one); // "one"
+			console.log(two); // "two"
+			console.log(three); // "three"
+
+			// ## 与声明相分离的赋值
+			var a, b;
+
+			[a, b] = [1, 2];
+			console.log(a); // 1
+			console.log(b); // 2
+
+			// ## 默认值
+			// 一个变量可以赋予一个默认值，以防止从数组中拉取的值是 undefined 的情况。
+			var a, b;
+
+			[a=5, b=7] = [1];
+			console.log(a); // 1
+			console.log(b); // 7
+
+			// ## 变量交换（swapping variables）
+			// 在解构表达式中，两个变量的值可以互换。
+			// 如果没有解构赋值，要想互换两个变量的值需要一个暂时性中间变量（或者，在一些低级的语言中，XOR互换算法）。
+			var a = 1;
+			var b = 3;
+
+			[a, b] = [b, a];
+			console.log(a); // 3
+			console.log(b); // 1
+
+			// ## 解析从函数中返回的数组
+			// 从函数中返回一个数组是很有可能发生的事情。解构可以使得处理数组返回值的方式更加简洁。
+			// 在本例中，f() 返回数组 [1, 2] 作为其输出结果，这个返回结果可以使用解构赋值的方式在一行代码中实现解析。
+			function f() {
+				return [1, 2];
+			}
+
+			var a, b;
+			[a, b] = f();
+			console.log(a); // 1
+			console.log(b); // 2
+
+			// ## 忽略某些返回值
+			// 你可以忽略那些你不感兴趣的值：
+			function f() {
+				return [1, 2, 3];
+			}
+			var a, b;
+			[a, , b] = f();
+			console.log(a); // 1
+			console.log(b); // 3
+			// 你甚至可以所有的返回值。
+			[,,] = f();
+
+			// ## 从正则匹配中拉取值
+			// 当正则表达式的 exec() 方法获取到一个匹配的时候...
+//---------- 对正则表达式不是很熟悉，需要单独新建一个正则表达式相关的repo------------
+			
+		// # 对象解构
+			// ## 基础赋值
+			var o = {p: 42, q: true};
+			var {p, q} = o;
+			console.log(p); // 42
+			console.log(q); // true
+
+			// ## 不声明直接赋值
+			var a, b;
+			({a, b} = {a: 1, b: 2});
+			// 注意：当使用对象字面量不声明，直接赋值的时候，赋值语句需要包裹一堆小括号，这个是必要的语法。
+			// {a, b} = {a: 1, b: 2} 这样的语法是无效的，因为等号左侧的 {a, b} 会被当成一个块，而不是对象字面量。
+			// 然而，({a, b} = {a: 1, b: 2}) 是有效的，同样 var {a ,b} = {a: 1, b: 2} 也是有效的。
+
+			// ## 赋值给新的变量名称
+			// 变量可以从一个对象中抽取出来，赋值给一个与原对象属性名不同的新的变量。
+			var o = {p: 42, q: true};
+			var {p: foo, q: bar} = o;
+			console.log(foo); // 42
+			console.log(bar); // true
+
+			// ## 默认值
+			// 一个变量可以赋值一个默认值，以防止从对象中拉取到的值为 undefined。
+			var {a=10, b=5} = {a: 3};
+			console.log(a); // 3
+			console.log(b); // 5
+
+			// ## 设置一个函数参数的默认值
+				// ### ES5 版本
+				function drawESSChart(options) {
+					options = options === undefined ? {} : options;
+					var size = options.size === undefined ? 'big' : options.size;
+					var cords = options.cords === undefined ? { x: 0, y: 0 } : options.cords;
+					var radius = options.radius === undefined ? 25 : options.radius;
+					console.log(size, cords, radius);
+				    // now finally do some chart drawing
+				}
+				drawES5Chart({
+				  cords: { x: 18, y: 30 },
+				  radius: 30
+				});
+
+				// ### ES6 版本
+				function drawES6Chart({size = 'big', cords = { x: 0, y: 0 }, radius = 25} = {}) {
+				  console.log(size, cords, radius);
+				  // do some chart drawing
+				}
+
+				// In Firefox, default values for destructuring assignments are not yet implemented (as described below). 
+				// The workaround is to write the parameters in the following way:
+				// ({size: size = 'big', cords: cords = { x: 0, y: 0 }, radius: radius = 25} = {})
+
+				drawES6Chart({
+				  cords: { x: 18, y: 30 },
+				  radius: 30
+				});
+				//In Firefox, default values for destructuring assignments are not yet implemented: var { x = 3 } = {} and var [foo = "bar"] = []. See bug 932080 for destructured default values in functions.
+
+			// ## 模块（非 ES6 ）加载
+			// 解构可以协助加载非 ES6 模块的子集，如下面的 Add-on SDK 所示：
+			const {loader, main} = require('toolkit/loader');
+			// 注意：ES6 中 import 语句拥有着类似的行为，但切记 import 并不是解构。
+
+			// ## 嵌套对象和数组的解构
+			var metadata = {
+			    title: "Scratchpad",
+			    translations: [
+			       {
+			        locale: "de",
+			        localization_tags: [ ],
+			        last_edit: "2014-04-14T08:43:37",
+			        url: "/de/docs/Tools/Scratchpad",
+			        title: "JavaScript-Umgebung"
+			       }
+			    ],
+			    url: "/en-US/docs/Tools/Scratchpad"
+			};
+
+			var { title: englishTitle, translations: [{ title: localeTitle }] } = metadata;
+
+			console.log(englishTitle); // "Scratchpad"
+			console.log(localeTitle);  // "JavaScript-Umgebung"
+
+			// ## for of 遍历和解构
+			var people = [
+				{
+					name: "Mike Smith",
+					family: {
+						mother: "Jane Smith",
+						father: "Harry Smith",
+						sister: "Samantha Smith"
+					},
+					age: 35
+				},{
+					name: "Tom Jones",
+					family: {
+						mother: "Norah Jones",
+						father: "Richard Jones",
+						sister: "Howard Jones"
+					},
+					age: 25
+				}
+			];
+			for (var {name: n, family: { father: f } } of people) {
+			  console.log("Name: " + n + ", Father: " + f);
+			}
+
+			// "Name: Mike Smith, Father: Harry Smith"
+			// "Name: Tom Jones, Father: Richard Jones"
+
+			// ## 从被传入到函数的对象中拉取字段
+			function userId({id}) {
+				return id;
+			}
+			function whois({displayName: displayName, fullName: {firstname: name}}) {
+				console.log(displayName + 'is' + name);
+			}
+
+			var user = {
+				id: 42,
+				displayName: "jdoe",
+				fullName: {
+					firstName: "John",
+					lastName: "Doe"
+				}
+			};
+
+			console.log("userId: " + userId(user)); // "userId: 42"
+			whois(user); // "jdoe is John"
+			// 这从 user 对象中拉取了 id, displayName, firstName，并将他们打印出来。
+
+			// ## 计算后的对象属性名称和解构
+			// 计算后的对象属性名称，就像在对象字面量中所示，可以用于解构。
+			let key = "z";
+			let { [key]: foo } = { z: "bar" };
+			console.log(foo); // "bar"
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
