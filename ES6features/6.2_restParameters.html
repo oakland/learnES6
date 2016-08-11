@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>6.2_restParameters</title>
+	<script type="text/javascript">
+		// rest 参数语法，允许呈现无限个参数组成的数组。
+		// # 语法
+		function(a, b, ...theArgs) {
+			// ...
+		}
+		// # 描述
+		// 如果函数的最后一个命名参数，拥有 ... 的前缀，那么这个参数就是一个数组，这个数组的元素从 0 - theArgs.length-1 都是传入函数中的参数。
+		// 在上面的例子中，theArgs 将会收集函数的第三个参数（因为第一个参数映射为 a，而第二个参数映射为 b）及以后的所有参数。
+
+			// ## rest 参数和 arguments 参数之间的区别
+			// rest 和 arguments 参数之间的区别主要有三点：
+			// 1. rest 参数只是那些没有独立名字的参数，而 arguments 对象包含了传入函数中的所有参数。
+			// 2. arguments 对象并不是一个真正的数组，而 rest 参数却是一个 Array 实例，这意味着，诸如 sort, map, forEach, pop 这类的方法都可以直接应用在 rest 上。
+			// 3. arguments 对象拥有一些只有自己才有的功能，例如 callee 属性。
+
+			// ## 从 arguments 到数组
+			// rest 参数的引入用来减少曾经用 arguments 所引入的模板代码。
+
+			// Before rest parameters, the following could be found:
+			function f(a, b) {
+				var args = Array.prototype.slice.call(arguments, f.length);
+
+				// ...
+			}
+
+			// to be equivalent of
+
+			function f(a, b, ...args) {
+
+			}
+
+			// # 例子
+			// 鉴于 theArgs 是一个数组，所以你可以通过使用 length 属性来获取这个数组的元素个数：
+			function fun1(...theArgs) {
+				console.log(theArgs.length);
+			}
+
+			fun1(); // 0
+			fun1(5); // 1
+			fun1(5, 6, 7); // 3
+
+			// 在下面的例子中，我们使用 rest 参数来收集第二个参数到最后一个参数。然后将这个 rest 数组中的每一个元素都乘以第一个参数：
+			function multiply(multiplier, ...theArgs) {
+				return theArgs.map(function(element) {
+					return multiplier * element;
+				})
+			}
+			var arr = multiply(2, 1, 2, 3);
+			console.log(arr); // [2, 4, 6]
+
+			// 下面的例子中展示了，你可以在 rest 参数上使用 Array 的方法，但是无法在 arguments 对象上使用。
+			function sortRestArgs(...theArgs) {
+				var sortArgs = theArgs.sort();
+				return sortArgs;
+			}
+			console.log(sortRestArgs(5, 3, 7, 1)); // shows 1,3,5,7
+
+			function sortArguments() {
+			  var sortedArgs = arguments.sort(); 
+			  return sortedArgs; // this will never happen
+			}
+
+			// throws a TypeError: arguments.sort is not a function
+			console.log(sortArguments(5,3,7,1));
+
+			// 为了能够在 arguments 对象上使用 Array 的方法，你需要首先将 arguments 对象转化成一个真正的数组。
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
