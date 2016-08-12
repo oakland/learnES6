@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>6.3_spread</title>
+	<script type="text/javascript">
+		// spread 操作符在那些多个参数（函数调用），多个元素（数组字面量）或者多个变量（解构赋值）出现的地方，可以允许表达式进行扩展。
+		// # 语法
+			// 对于函数而言
+			myFunction(...iterableObj);
+
+			// 对于数组字面量
+			[...iterableObj, 4, 5, 6]
+
+		// # 例子
+			// ## 更优雅的 apply
+				// 例子：当你希望将一个数组当做函数的 arguments 传入的时候，通常都会用到 Function.prototype.apply。
+				function myFunction(x, y, z) { }
+				var args = [0, 1, 2];
+				myFunction.apply(null, args);
+
+				// 使用 ES6 的 spread 你可以将上面代码改写为：
+				function myFunction(x, y, z) {}
+				var args = [0, 1, 2];
+				myFunction(...args);
+
+				// 任何处于 arguments 列表中的 argument 可以使用 spread 语法，并且可以被多次使用。
+				function myFunction(v, w, x, y, z) {}
+				var args = [0, 1];
+				myFunction(-1, ...args, 2, ...[3]);
+
+			// ## 一个更加强大的数组字面量
+				// 例子：现在你有一个数组，然后你想再创建一个新的数组，这个新数组是原来数组中的一部分，数组字面量语法无法满足这个需求，你必须采用命令式代码，综合使用 push slice concat 等等多个方法。现在，使用 spread 语法，上面的情况会更加简明：
+				var parts = ["shoulders", "knees"];
+				var parts = ["head", ...parts, "and", "toes"]; // ["head", "shoulders", "knees", "and", "toes"]
+				// 就像函数参数中的 spread 列表一样， ... 可以在数组字符串的任何地方使用，并且可以被多次使用。
+
+			// ## 应用于 new 操作符
+				// 例子：在 ES5 中，new 操作符和 apply 结合使用是不可能的。（In ES5 terms, apply does a [[Call]] and not a [[Construct]].）在 ES6 中，spread 语法很自然的支持这种情况：
+				var dateFields = readDateFields(database);
+				var d = new Date(...dateFields);
+				// --steam comment-- 上面这段没看懂
+
+			// ## 复制一个数组
+				var arr = [1, 2, 3];
+				var arr2 = [...arr]; // like arr.slice()
+				arr2.push(4); // arr2 becomes [1, 2, 3, 4], arr stays unaffected
+
+			// ## 更好的 push 版本
+				// 例子：push 通常用于将一个数组推入到一个已有数组的后面。在 ES5 中，这通常使用下面的方式：
+				var arr1 = [0, 1, 2];
+				var arr2 = [3, 4, 5];
+				// Append all items from arr2 onto arr1
+				Array.prototype.push.apply(arr1, arr2);
+
+				// 在 ES6 中，使用 spread 语法，你可以这样操作：
+				var arr1  =[0, 1, 2];
+				var arr2 = [3, 4, 5];
+				arr1.push(...arr2);
+
+			// ## Only apply for iterables
+				var obj = {"key1":"value1"};
+				function myFunction(x) {
+				    console.log(x); // undefined
+				}
+				myFunction(...obj);
+				var args = [...obj];
+				console.log(args, args.length) //[] 0
+
+		// # rest 操作符
+			// rest 操作符和 spread 操作符非常相似，被用来解构数组或者对象。某种程度而言，其实 rest 元素和 spread 元素正好相反，spread 元素扩展了一个数组的长度，而 rest 元素收集了多个元素，将它们浓缩成一个单独的元素。
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
