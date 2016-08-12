@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>7.2_const</title>
+	<script type="text/javascript">
+		// const 声明创建一个指向值的只读引用。这不意味着，这个它存储的变量不会变化，只意味着变量辨识符不能被再次赋值。
+		// # 语法
+		const name1 = value1 [, name2 = value2 [, ... [, nameN = valueN]]];
+		// nameN
+		// The constant's name, which can be any legal identifier.
+		// valueN
+		// The constant's value; this can be any legal expression.
+		// # 描述
+		// const 创建一个定量，这个定量要么是全局的，要么就是所在的函数的局部变量。定量的初始化值是必须要有的：你必须在这条语句中指明这个值。（这样才合理，考虑到它后面不会发生变化）。
+		// constants 是块级作用域，非常类似于 let 语句定义的变量。constant 的值无法通过重新赋值来改变，也无法被再次声明。
+		// All the considerations about the "temporal dead zone" that apply to let, also apply to const.
+		// 一个 constant 无法和同作用域中的函数或者变量共用一个名字。
+
+		// # 例子
+			// NOTE: Constants can be declared with uppercase or lowercase, but a common
+			// convention is to use all-uppercase letters.
+
+			// define MY_FAV as a constant and give it the value 7
+			const MY_FAV = 7;
+
+			// this will throw an error in Firefox and Chrome (but does not fail in Safari)
+			MY_FAV = 20;
+
+			// will print 7
+			console.log("my favorite number is: " + MY_FAV);
+
+			// trying to redeclare a constant throws an error
+			const MY_FAV = 20;
+
+			// the name MY_FAV is reserved for constant above, so this will also fail
+			var MY_FAV = 20;
+
+			// this throws an error also
+			let MY_FAV = 20;
+
+			// it's important to note the nature of block scoping
+			if (MY_FAV === 7) { 
+			    // this is fine and creates a block scoped MY_FAV variable 
+			    // (works equally well with let to declare a block scoped non const variable)
+			    const MY_FAV = 20;
+
+			    // MY_FAV is now 20
+			    console.log("my favorite number is " + MY_FAV);
+
+			    // this gets hoisted into the global context and throws an error
+			    var MY_FAV = 20;
+			}
+
+			// MY_FAV is still 7
+			console.log("my favorite number is " + MY_FAV);
+
+			// Assigning to A const variable is a syntax error
+			const A = 1; A = 2;
+
+			// throws an error, missing initializer in const declaration
+			const FOO; 
+
+			// const also works on objects
+			const MY_OBJECT = {"key": "value"};
+
+			// Overwriting the object behaves as above (throws an error in Firefox and Chrome but does not fail in Safari)
+			MY_OBJECT = {"OTHER_KEY": "value"};
+
+			// However, object keys are not protected,
+			// so the following statement is executed without problem
+			MY_OBJECT.key = "otherValue"; // Use Object.freeze() to make object immutable
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
