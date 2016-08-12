@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>7.1_let</title>
+	<script type="text/javascript">
+		// let 语句声明一个块级作用域中的局部变量，进行初始化赋值是可选的。
+		// # 语法
+			let var1 [= value1] [, var2 [= value2]] [, ..., varN [= valueN]];
+
+			// ## 参数
+				// var1, var2, ..., varN
+				// 变量名，可以是任何有效的辨识符。
+				// value1, value2, ..., valueN
+				// 变量的初始化值，可以是任何有效的表达式
+		// # 描述
+			// let 允许你声明一个限制在块级作用域，语句或者表达式中的变量。let 不同于 var 关键字，var 会定义一个全局变量，或者一个忽略块级作用域成为一个函数内局部的变量。
+
+			// ## 作用域规则
+				// 由 let 声明的变量拥有由它所在的块级的作用域，以及任何被包含的子块（sub-blocks）。这样的话，let 和 var 的工作非常相似。主要的区别就在于 var 声明的变量作用域是整个函数：
+				function varTest() {
+					var x = 1;
+					if (true) {
+						var x = 2;  // same variable!
+						console.log(x); // 2
+					}
+					console.log(x); // 2
+				}
+
+				function letTest() {
+					let x = 1;
+					if (true) {
+						let x = 2; // different variable!
+						console.log(x); // 2
+					}
+					console.log(x); // 1
+				}
+
+			// ## 内部函数的代码更加简洁
+				// 当函数内部嵌套函数的时候，let 有时会让代码更加简洁。
+				var list = document.getElementById('list');
+				for (let i = 0; i <= 5; i++) {
+					let item = document.createElement("li");
+					item.appendChild(document.createTextNode("Item" + i));
+
+					item.onclick = function(ev) {
+						console.log("Item" + i + " is clicked.");
+					}
+
+					list.appendChild(item);
+				}
+				// 上面的例子会按照我们预想的运行，因为五个内部匿名函数的实例指向五个不同的变量 i 的实例。注意，如果你使用 var 替换 let 的话，代码就不会按照我们期望的那样运行，因为所有的内部函数都会指向同一个值，就是 i:6。 Also, we can keep the scope around the loop cleaner by moving the code that creates the new elements into the scope of each loop.
+				// --steam comment--其实 let 就相当于每次都创建一个新的实例，这个例子中的 for 循环使用 let i 就表示共实例化了 5 次 i，或者共创建了五个不同的 i，每次都和上次不同。关于上面最后一句英文没有太懂。
+
+				// 在程序或者函数的最外层，let，不像 var 一样，创建一个全局对象。例如：
+				var x = "global";
+				let y = "global";
+				console.log(this.x); // "global"
+				console.log(this.y); // undefined
+
+			// ## Temporal dead zone and errors with let
+				// 在同一个函数内或者块级作用域内，第二次声明同一个变量会导致 SyntaxError 的错误。
+				if (x) {
+					let foo;
+					let foo; // SyntaxError thrown.
+				}
+
+				// 在 ECMAScript2015 中，let 会将变量提升到块级作用域顶端。但是，在块级作用域中，在变量声明之前就就引用变量会导致 ReferenceError。The variable is in a "temporal dead zone" from the start of the block until the declaration is processed.
+				function doSomething() {
+					console.log(foo); // ReferenceError
+					let foo = 2;
+				}
+
+				// 你也可能在 switch 语句中遇到错误，因为只有一个 underlying block。
+				swith(x) {
+					case 0:
+						let foo;
+						break;
+					case 1:
+						let foo; // SyntaxError for redeclaration
+						break;
+				}
+
+				// 用 let 创建一个和函数传入参数相同名称的变量名，会导致 for loop 中出现 undefined。
+				function go(n) {
+					for(let n of n.a) {
+						console.log(n);
+					}
+				}
+
+				go({a:[1,2,3]});
+
+				// # 另外一个例子
+				// 当在块中使用的时候，let 会将变量的作用域限制到这个块内。注意他和 var 的区别，var 会将变量的作用域限制到声明时所在函数的内部。
+				var a = 1;
+				var b = 2;
+
+				if (a === 1) {
+				  var a = 11; // the scope is global
+				  let b = 22; // the scope is inside the if-block
+
+				  console.log(a);  // 11
+				  console.log(b);  // 22
+				} 
+
+				console.log(a); // 11
+				console.log(b); // 2
+
+				// # 非标准 let 拓展
+					// ## let 块
+					// --steam comment--这部分的内容，暂时先不翻译，似乎意义不大。
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
