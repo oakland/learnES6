@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>8.2_forof</title>
+	<script type="text/javascript">
+		// for...of 语句创建一个遍历，遍历所有可迭代的对象（包括Array, Map, Set, String, TypedArray, arguments 等等），用将要执行的语句，触发一个自定义的迭代钩子，迭代每一个不同的属性值。
+
+		// # 语法
+			// for (variable of iterable) {
+				// statements
+			// }
+
+			// variable
+			// on each iteration a value of a different property is assigned to variable.
+			// iterable
+			// Object whose enumerable properties are iterated.
+
+		// # 例子
+			// ## 迭代 Array
+			let iterable = [10, 20, 30];
+			for (let value of iterable) {
+				console.log(variable);
+			}
+			// 10
+			// 20
+			// 30
+
+			// 你也可以使用 const 替换 let，如果你不修改块中的变量的话。
+			let iterable = [10, 20, 30];
+			for (const value of iterable) {
+				console.log(variable);
+			}
+			// 10
+			// 20
+			// 30
+
+			// ## 迭代 String
+			let iterable = "boo";
+			for (let value of iterable) {
+				console.log(value);
+			}
+			// "b"
+			// "o"
+			// "o"
+
+			// ## 迭代 TypedArray
+			let iterable = new Uint8Array([0x00, 0xff]);
+
+			for (let value of iterable) {
+			  console.log(value);
+			}
+			// 0
+			// 255
+
+			// ## 迭代 Map
+			let iterable = new Map([["a", 1],["b", 1],["c", 1]]);
+			for (let entry of iterable) {
+				console.log(entry);
+			}
+			// [a, 1]
+			// [b, 2]
+			// [c, 3]
+
+			for (let [key, value] of iterable) {
+				console.log(value);
+			}
+			// 1
+			// 2
+			// 3
+
+			// ## 迭代 Set
+			let iterable = new Set([1, 1, 2, 2, 3, 3]);
+			for (let value of iterable) {
+				console.log(value);
+			}
+			// 1
+			// 2
+			// 3
+
+			// ## 迭代 DOM collection
+			// 迭代诸如 NodeList 这样的 DOM collection：下面的例子为每一个 article 的直接后代的 paragragh 都添加了一个 class：
+			// Note: This will only work in platforms that have
+			// implemented NodeList.prototype[Symbol.iterator]
+			let articleParagraphs = document.querySelectorAll("article > p");
+
+			for (let paragraph of articleParagraphs) {
+			  paragraph.classList.add("read");
+			}
+
+			// ## 迭代 generators
+			function* fibonacci() { // a generator function
+			  let [prev, curr] = [1, 1];
+			  while (true) {
+			    [prev, curr] = [curr, prev + curr];
+			    yield curr;
+			  }
+			}
+
+			for (let n of fibonacci()) {
+			  console.log(n);
+			  // truncate the sequence at 1000
+			  if (n >= 1000) {
+			    break;
+			  }
+			}
+
+			// ## 迭代 iterable objects
+			// 你可以迭代显式的执行 iterable 协议的对象：
+			var iterable = {
+			  [Symbol.iterator]() {
+			    return {
+			      i: 0,
+			      next() {
+			        if (this.i < 3) {
+			          return { value: this.i++, done: false };
+			        }
+			        return { value: undefined, done: true };
+			      }
+			    };
+			  }
+			};
+
+			for (var value of iterable) {
+			  console.log(value);
+			}
+			// 0
+			// 1
+			// 2
+
+			// ## for...of 和 for...in 的区别
+			// for...in 遍历会迭代对象（objects）的所有可数属性。
+			// for...of语法针对所有的集合，而不仅仅是对象（objects）。它会对集合中所有拥有 [Symbol.iterator] 属性的元素都以这样一种方式遍历。下面的例子展示 for...of 和 for...in 之间的区别：
+			Object.prototype.objCustom = function () {}; 
+			Array.prototype.arrCustom = function () {};
+
+			let iterable = [3, 5, 7];
+			iterable.foo = "hello";
+
+			for (let i in iterable) {
+			  console.log(i); // logs 0, 1, 2, "foo", "arrCustom", "objCustom"
+			}
+
+			for (let i of iterable) {
+			  console.log(i); // logs 3, 5, 7
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
