@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>9.1_iterationProtocols</title>
+	<script type="text/javascript">
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
+		// ECMAScript 2015(ES6) 新增内容中的一项不是语法，也不是新增内置，而是一个协议。这个协议可以被任何遵守某项规定的对象执行。
+		// 有两个协议：循环协议和迭代器协议（iterable protoclo and iterator protocol）。
+
+		// # iterable protocol
+			// iterable protocol 允许 JS 对象定义或者自定义其循环行为（iteration behavior），例如哪些值在 for...of 构造中遍历。一些内置的类型是内置的循环，拥有默认的循环行为，例如 Array 或者 Map，而另外一些（比如 Object）则没有默认内置行为。
+			// 为了能够循环，对象必须执行 @@iterator 方法，表示这个对象（或者这个对象的原型链上的某个对象）必须拥有一个带 Symblo.iterator 键的属性：
+			// Property             |   Value
+			// [Symbol.iterator]    |   A zero arguments function that returns an object, conforming to the iterator protocol.
+			// 当一个对象需要被循环的时候（例如在 for...of 循环开始之前），对象的 @@iterator 方法就被调用了，没有传入任何参数，而返回的 iterator 用于获取要被循环的值。
+
+		// # iterator protocol
+			// iterator 协议定义了一种生产一系列值的标准方法（有限或者无限的）
+			// 当一个对象使用下面的语法执行 next() 方法的时候，这个对象就成为了一个 iterator：
+			// 无法绘制表格，请在链接中查看
+			// Some iterators are in turn iterables:
+
+			var someArray = [1, 5, 7];
+			var someArrayEntries = someArray.entries();
+			someArrayEntries.toString();   //"[object Array Iterator]"
+			someArrayEntries === someArrayEntries[Symbol.iterator]();  //trues
+
+		// # 使用 iteration protocol 的例子
+			// A String 是一个内置的 iterable object 的例子：
+			var someString = "hi";
+			typeof someString[Symbol.iterator];    // "function"
+
+			// String 的默认 iterator 会一个一个返回 string 的字母：
+			var iterator = someString[Symbol.iterator]();
+			iterator + "";     // "[object String Iterator]"
+			iterator.next();   // { value: "h", done: false }
+			iterator.next();   // { value: "i", done: false }
+			iterator.next();   // { value: undefined, done: true }
+
+			// 一些内置的构造（constructs），例如 spread 操作符，在后台使用同样的 iteration protocol：
+			[...someString]    // ["h", "i"]
+
+			// 我们可以通过提供自己的 @@iterator 来重新定义 iteration behavior：
+			var someString = new String("hi");          // need to construct a String object explicitly to avoid auto-boxing
+
+			someString[Symbol.iterator] = function() {
+			  return { // this is the iterator object, returning a single element, the string "bye"
+			    next: function() {
+			      if (this._first) {
+			        this._first = false;
+			        return { value: "bye", done: false };
+			      } else {
+			        return { done: true };
+			      }
+			    },
+			    _first: true
+			  };
+			};
+
+			// 注意：如何重新定义 @@iterator 影响使用 iteration protocol 的内置构造的行为：
+			[...someString];   // "bye"
+			someString + "";   // "hi"
+
+		// # Iterable examples
+			// ## Builtin iterables 
+			// String, Array, TypedArray, Map, Set 都是内置的 iterables，因为他们的原型对象都拥有 @@iterator 方法。
+
+			// ## User-defined iterables
+			// 我们可以像下面这样来创建自己的 iterables：
+			var myIterable = {};
+			myIterable[Symblo.iterator] = function() {
+				yield 1;
+				yield 2;
+				yield 3;
+			};
+			[...myIterable]; // [1, 2, 3]
+
+			// ## Builtin APIs accepting iterables
+			// 有很多 API 接受 iterables，例如： Map([iterable]), WeakMap([iterable]), Set([iterable]) and WeakSet([iterable])：
+			var myObj = {};
+			new Map([[1,"a"],[2,"b"],[3,"c"]]).get(2);               // "b"
+			new WeakMap([[{},"a"],[myObj,"b"],[{},"c"]]).get(myObj); // "b"
+			new Set([1, 2, 3]).has(3);                               // true
+			new Set("123").has("2");                                 // true
+			new WeakSet(function*() {
+			    yield {};
+			    yield myObj;
+			    yield {};
+			}()).has(myObj);                                         // true
+			// 还有 Promise.all(iterable), Promise.race(iterable), and Array.from()。
+			
+			// ## Syntaxes expecting iterables
+			// 有些语句和表达式需要 iterables，例如  for-of loops, spread operator, yield*, and destructuring assignment。
+			for(let value of ["a", "b", "c"]){
+			    console.log(value);
+			}
+			// "a"
+			// "b"
+			// "c"
+
+			[..."abc"]; // ["a", "b", "c"]
+
+			function* gen(){
+			  yield* ["a", "b", "c"];
+			}
+
+			gen().next(); // { value:"a", done:false }
+
+			[a, b, c] = new Set(["a", "b", "c"]);
+			a // "a"
+
+			// ## Non-well-formed iterables
+			// 如果一个 iterable 的 @@iterator 方法不能返回一个 iterator 对象的话，这个 iterable 就被称为 non-well-formed iterable，这样使用这个 iterable 的话很可能会出现意想不到的情况或者出现问题。
+			var nonWellFormedIterable = {}
+			nonWellFormedIterable[Symbol.iterator] = () => 1
+			[...nonWellFormedIterable] // TypeError: [] is not a function
+
+			// # iterator examples
+				// ## simple iterator
+				function makeIterator(array){
+				    var nextIndex = 0;
+				    
+				    return {
+				       next: function(){
+				           return nextIndex < array.length ?
+				               {value: array[nextIndex++], done: false} :
+				               {done: true};
+				       }
+				    };
+				}
+
+				var it = makeIterator(['yo', 'ya']);
+
+				console.log(it.next().value); // 'yo'
+				console.log(it.next().value); // 'ya'
+				console.log(it.next().done);  // true
+
+				// ## infinite iterator
+				function idMaker(){
+				    var index = 0;
+				    
+				    return {
+				       next: function(){
+				           return {value: index++, done: false};
+				       }
+				    };
+				}
+
+				var it = idMaker();
+
+				console.log(it.next().value); // '0'
+				console.log(it.next().value); // '1'
+				console.log(it.next().value); // '2'
+				// ...
+
+				// ## With a generator
+				function* makeSimpleGenerator(array){
+				    var nextIndex = 0;
+				    
+				    while(nextIndex < array.length){
+				        yield array[nextIndex++];
+				    }
+				}
+
+				var gen = makeSimpleGenerator(['yo', 'ya']);
+
+				console.log(gen.next().value); // 'yo'
+				console.log(gen.next().value); // 'ya'
+				console.log(gen.next().done);  // true
+
+
+
+				function* idMaker(){
+				    var index = 0;
+				    while(true)
+				        yield index++;
+				}
+
+				var gen = idMaker();
+
+				console.log(gen.next().value); // '0'
+				console.log(gen.next().value); // '1'
+				console.log(gen.next().value); // '2'
+				// ...
+
+				// ## generator 对象是一个 iterator 还是一个 iterable
+				// generator 既是 iterator 也是 iterable
+				var aGeneratorObject = function*(){
+				    yield 1;
+				    yield 2;
+				    yield 3;
+				}();
+				typeof aGeneratorObject.next;
+				// "function", because it has a next method, so it's an iterator
+				typeof aGeneratorObject[Symbol.iterator];
+				// "function", because it has an @@iterator method, so it's an iterable
+				aGeneratorObject[Symbol.iterator]() === aGeneratorObject;
+				// true, because its @@iterator method return its self (an iterator), so it's an well-formed iterable
+				[...aGeneratorObject];
+				// [1, 2, 3]
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
