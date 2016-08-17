@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>9.2_function*</title>
+	<script type="text/javascript">
+		// function* 声明定义了一个 generator 函数，返回一个 Generator object。
+		// 你也可以使用 GeneratorFunction 构造器或者 function* 表达式来定义一个 generator 函数。
+
+		// # 语法
+		function* name([param, [param, [param]]]) {
+			statements
+		}
+		// name
+		// The function name.
+		// param
+		// The name of an argument to be passed to the function. A function can have up to 255 arguments.
+		// statements
+		// The statements comprising the body of the function.
+
+		// # 描述
+		// generators 是可以退出然后再进入的函数。generators 的 context(variable bindings) 可以在再次进入的时候依然保留。
+		// 调用 generator 函数不会离立即执行函数体；而是会返回这个函数的 iterator object。当 iterator 的 next() 方法被调用的时候，generator 的函数体就会执行，直到第一个 yield 表达式，yield 表达式明确从 iterator 的返回值，或者如果是  yield*，则会代理另外一个 generator 函数。next() 方法返回一个拥有 value 属性和 done 属性的对象，value 属性包含的是 yield value，done 属性用布尔值表明 generator 是否已经 yield its last value。如果传入一个参数来调用 next() 方法，将会重新开始 generator 函数的执行，从种植的地方替换掉 yield 语句，next() 中的参数是执行中止的地方。
+
+		// # 例子
+
+			// ## 简单例子
+			function* idMaker() {
+				var index = 0;
+				while(index < 3) {
+					yield index++;
+				}
+			}
+
+			var gen = idMaker();
+
+			console.log(gen.next().value); // 0
+			console.log(gen.next().value); // 1
+			console.log(gen.next().value); // 2
+			console.log(gen.next().value); // undefined
+
+			// ## yield* 的例子
+			function* anotherGenerator(i) {
+				yield i + 1;
+				yield i + 2;
+				yield i + 3;
+			}
+			function* generator(i) {
+				yield i;
+				yield* anotherGenerator(i);
+				yield i + 10;
+			}
+
+			var gen = generator(10);
+
+			console.log(gen.next().value); // 10
+			console.log(gen.next().value); // 11
+			console.log(gen.next().value); // 12
+			console.log(gen.next().value); // 13
+			console.log(gen.next().value); // 20
+
+			// # 在 generator 中传入参数
+			function* logGenerator() {
+				console.log(yield);
+				console.log(yield);
+				console.log(yield);
+			}
+
+			var gen = logGenerator();
+
+			// the first call of next executes from the start of the function
+			// until the first yield statement
+			gen.next(); 
+			gen.next('pretzel'); // pretzel
+			gen.next('california'); // california
+			gen.next('mayonnaise'); // mayonnaise
+
+			// ## Generators are not constructable
+			function* f() {};
+			var obj = new f(); // // throws "TypeError: f is not a constructor"
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
