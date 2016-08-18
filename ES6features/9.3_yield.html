@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>9.3_yield</title>
+	<script type="text/javascript">
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield
+		// yield 关键字用于暂停和重新开始一个 generator 函数（function* 或者 legacy generator function）。
+		// # 语法
+		[rv] = yield [expression];
+		// expression
+		// 定义通过 iterator protocol 从 generator 函数的返回值。如果省略，则会返回一个 undefined。
+		// rv
+		// 返回传入 generator 的 next() 方法的可选值，重新开始执行。Returns the optional value passed to the generator's next() method to resume its execution.
+
+		// # 描述
+		// yield 关键字会导致 generator 函数中止执行，而 yield 关键字之后的表达式的值会返回给 generator's caller。yield 可以被认为是基于 generator 版本的 return 关键字。
+		// yield 关键字实际上返回一个带有两个属性的 IteratorResult 对象，这两个属性分别是 value 和 done。value 属性是 yield 表达式产生的值，而 done 为 false，表明 generator 函数并未完全执行完毕。
+		// 一旦在 yield 表达式上中止，generator 的代码执行就会中断，直到 generator 的 next() 方法被调用。每次 generator 的 next() 方法被调用的时候，generator 就会恢复执行，继续运行，直到符合下面的任何一个情况的时候：
+			// 1. yield，yield 会再次让 generator 中止，返回一个 generator 的最新值。下次 next() 被调用的时候，yield 之后的语句会立即恢复执行。
+			// 2. throw 用于从 generator 抛出一个特殊情况。这回完全终止 generator 的执行，and execution resumes in the caller as is normally the case when an exception is thrown.
+			// 3. 到达 generator 函数的结尾；这种情况下，generator 的执行结束，一个 IteratorResult 会返回给 caller，caller 的值是 return 语句指定的值，而 done 属性则为 true。
+
+		// 如果在 next() 函数中传入可选的参数，这个值就会成为 generator 当前 yield 操作符返回的值。
+		// --steam comment--也就是说，next() 传入什么值，就返回什么值。
+		// 在 generator 代码路径、yield 操作符、以及通过传入给 Generator.prototype.next() 函数一个新的初始值，这些内容之间，generator 提供了很多的能力和控制。
+
+		// # 例子
+		// 下面的代码是一个 generator 函数的声明：
+		function* foo() {
+			var index = 0;
+			while(index<=2)
+				yield index++;
+		}
+		// 一旦一个 generator 函数被定义，他就可以通过构造一个 iterator 来使用，如下所示：
+		var iterator = foo();
+		console.log(iterator.next()); // {value: 0, done: false}
+		console.log(iterator.next()); // {value: 1, done: false}
+		console.log(iterator.next()); // {value: 2, done: false}
+		console.log(iterator.next()); // {value: undefined, done: true}
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
