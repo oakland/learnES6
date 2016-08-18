@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>10.2_import</title>
+	<script type="text/javascript">
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
+		// import 语句用于引入从外部模块或者脚本等中所导出的函数，对象和原始类型。
+		// 注意，这个功能不会被任何浏览器进行原生执行。它是由很多 transpilers 所执行，例如 Tranceur compiler, Babel, Rollup等。
+
+		// # 语法
+		import defaultMember from "module-name";
+		import * as name from "module-name";
+		import { member } from "module-name";
+		import { member as alias } from "module-name";
+		import { member1, member2 } from "module-name";
+		import { member1, member2 as alias2, [...] } from "module-name";
+		import defaultMember, { member [, [...] ] } from "module-name";
+		import defaultMember, * as name from "module-name";
+		import "module-name";
+		
+ 		// name
+		// 承接引入值得对象名。Name of the object that will receive the imported values.
+		// member, memberN
+		// 将要被引入的输出成员名。Name of the exported members to be imported.
+		// defaultMember
+		// 默认被引入的成员名。Name of the exported default to be imported.
+		// alias, aliasN
+		// 获取引入属性的对象名。Name of the object that will receive the imported property
+		// module-name
+		// 要引入的模块名称，是一个文件名。The name of the module to import. This is a file name.
+
+		// # 描述
+		// name 参数是将要获取输出成员的对象名。member 参数执行一个单独的成员，而 name 参数则把他们都引入进来。name 也可能是一个函数，如果模块导出的是一个单独的参数，而不是一些列成员。下面是澄清语法的例子：
+
+		// 引入一个完整的模块内容。这会在当前 scope 中插入 myModule，包含所有的来自于 "my-module.js" 的输出绑定。
+		import * as myModule from "my-module";
+
+		// 引入模块的一个单一成员。下面的代码会将 myMember 插入到当前的 scope。
+		import {myMember} from "my-module";
+
+		// 从一个模块中引入多个成员。下面的代码会将 foo 和 bar 同时插入到当前的 scope 中。
+		import {foo, bar} from "my-module";
+
+		// 使用一个更加方便的别名来引入一个成员。下面的代码会将 shortName 插入到当前的 scope中。
+		import {reallyReallyLongModuleMemberName as shortName} from "my-module";
+
+		// 使用一个简单的别名引入一个模块的多个成员。
+		import {reallyReallyLongModuleMemberName as shortName, anotherLongModule as short} from "my-module";
+
+		// 引入完整的模块，不引入任何绑定。
+		import "my-module";
+
+			// ## importing defaults
+			// 可以拥有默认的输出（不论是一个对象，还是对象，还是其他）。同样，使用 import 也可以引入默认内容。
+
+			// 引入默认的最简单的方式
+			import myDefault from "my-module";
+
+			// 也可以使用上面所看到的 default 语法（namespace imports or named import）。在这种情况下，default import 必须提前声明。例如
+			// 也可以使用上面所看到的 default 语法（namespace imports or named import）。在这种情况下，default import bi
+			import myDefault, * as myModule from "my-module";
+			// myModule used as a namespace
+			// 或者也可以这些写：
+			import myDefault, {foo, bar} from "my-module";
+			//specific, named imports
+
+		// # 例子
+		// 引入一个次级文件（secondary file）以协助执行 AJAX JSON 请求。
+
+		// --file.js--
+		function getJSON(url, callback) {
+			let xhr = new XMLHttpRequest();
+			xhr.onload = function() {
+				callback(this.responseText)
+			};
+			xhr.open("GET", url, true);
+			xhr.send();
+		}
+		export function getUsefullContents(url, callback) {
+			getJSON(url, data => callback(JSON.parse(data)));
+		}
+
+		// --main.js--
+		import { getUsefullContents } from "file";
+		getUsefullContents("http://www.example.com", data => {
+		  doSomethingUseful(data);
+		});
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
