@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>10.3_export</title>
+	<script type="text/javascript">
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export
+
+		// export 语句用于从指定的文件或者模块中导出函数，对象或者原始类型。
+		// 注意，这个功能不会被任何浏览器进行原生执行。它是由很多 transpilers 所执行，例如 Tranceur compiler, Babel, Rollup等。
+
+		// # 语法
+		export { name1, name2, ..., nameN };
+		export { variable1 as name1, variable2 as names, ..., nameN };
+		export let name1, name2, ..., nameN; // also var
+		export let name1 = ..., name2 = ..., ..., nameN; // also var, const
+
+		export default expression;
+		export default function (...) { ... } // also class, function*
+		export default function name1(...) { ... } // also class, function*
+		export {name1 as default, ...};
+
+		export * from ...;
+		export {name1, name2, ..., nameN} from ...;
+		export { import1 as name1, import2 as name2, …, nameN } from …;
+
+		// nameN
+		// Identifier to be exported (so that it can be imported via import in another script).
+
+		// # 描述
+		// 有两种不同类型的 export，每种都会对应上面的一种语法：
+		// - named exports
+		export { myFunction }; // exports a function declared earlier
+		export const foo = Math.sqat(2); // export a constant
+
+		// - default exports(only one per script)
+		export default function() {} // or 'export default class {}'
+		// 注意，这里没有分号
+
+		// Named exports 用于输出多个值。输入的时候，我们可以使用同一个值来引用对应的值。
+		// 关于 default exports，每个模块只能有一个单独的 default export。一个 default export 可以是一个 function, class, object 或者任何其他的东西。这个值被认为是 ”main“ export，因为这是输出的最简单的方式。
+
+		// # 例子
+
+			// ## 使用 named exports
+			// 在模块中，我们可以使用下面代码：
+			// module, "my-module.js"
+			export function cube(x) {
+				return x * x * x;
+			}
+			const foo = Math.PI + Math.SQRT2;
+			export { cube, foo };
+
+			// 这样，在另外一个脚本中(cf.import)，我们可以用下面的代码：
+			import { cube, foo } from "my-module";
+			console.log(cube(3)); // 27
+			console.log(foo()); // 4.555806215962888
+
+			// ## 使用 default export
+			// 如果你想输出一个单一的值或者为你的模块拥有一个备胎，我们可以使用 default export:
+			// module, "my-module.js"
+			export default function cube(x) {
+				return x * x * x;
+			}
+			// 接着，在另一个脚本中，引入 default export 就很直白了：
+			import cube from "my-module";
+			console.log(cube(3)); // 27
+	</script>
+</head>
+<body>
+	
+</body>
+</html>
