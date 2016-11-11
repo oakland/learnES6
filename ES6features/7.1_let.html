@@ -109,6 +109,77 @@
 				// # 非标准 let 拓展
 					// ## let 块
 					// --steam comment--这部分的内容，暂时先不翻译，似乎意义不大。
+
+
+		// 关于 let 和 var 的区别，其实仅仅靠 “函数级作用域“ 和 ”块级作用域“ 这样简单的说明是无法明确的，总有一种对概念朦朦胧胧的感觉。
+		// 我最近买了 Udemy 上的一门课程，'JavaScript: The weird parts'，老师对于这个的讲解比较透彻，但是还没有来得及整理，又找到了 stackoverflow 上面的一个问题，对于理解 let 和 var 之间的区别有很有帮助。链接如下：
+		// http://stackoverflow.com/questions/762011/let-keyword-vs-var-keyword-in-javascript
+		// 这个问题里，ThinkingStiff目前的回答排名第一，但是他的回答只是说了 let 和 var 在表现上的区别，没有解释这种区别真正的内在原因和逻辑。我觉得Gurpreet Singh的回答也很好，有一句话说的很好：
+		// It binds fresh value rather than keeping an old reference as shown in examples below.
+		// 他举了两个例子：
+
+		// === 例子1 ====
+		// for(var i = 1; i < 6; i++) {
+		//   document.getElementById('my-element' + i)
+		//     .addEventListener('click', function() { alert(i) })
+		// }
+
+		// === 例子2 ===
+		// 'use strict';
+		// for(let i = 1; i < 6; i++) {
+		//   document.getElementById('my-element' + i)
+		//     .addEventListener('click', function() { alert(i) })
+		// }
+
+		// 其实 for loop 做了这么一件事情，就是在大括号中写了同样的 5 句话，但是因为 let 是块级作用域，在大括号中用 let 声明的 i 是唯一的，所以才会避免出现 var 出现的闭包问题。再讲清楚一点，我们可以把上面的代码写成这样：
+
+		// === 例子1等同于 ===
+		for(var i = 1) {
+			var i = 1;
+			document.getElementById('my-element' + 1)
+			.addEventListener('click', function() {alert(i)})
+		}
+		for(var i = 2) {
+			var i = 2;
+			document.getElementById('my-element' + 2)
+			.addEventListener('click', function() {alert(i)})
+		}
+		for(var i = 3) {
+			var i = 3;
+			document.getElementById('my-element' + 3)
+			.addEventListener('click', function() {alert(i)})
+		}
+		.
+		.
+		for(var i = 6) {
+			// 因为 i < 6 不成立，所以这里什么也没有
+		}
+		// 因为 alert 在这个 for loop 阶段一直没有被触发，而 var 声明的又不是块级作用域的，所以最终当用于点击的时候，触发 alert() 时，i 找到的是外部最后的 var i = 6，所以就会弹出 6，如果没看懂上面这段话，请接着往下看。
+
+		// === 例子2等同于 ===
+		for(let i = 1) {
+			let i = 1;
+			document.getElementById('my-element' + 1)
+			.addEventListener('click', function() {alert(i)})
+		}
+		for(let i = 2) {
+			let i = 2;
+			document.getElementById('my-element' + 2)
+			.addEventListener('click', function() {alert(i)})
+		}
+		for(let i = 3) {
+			let i = 3;
+			document.getElementById('my-element' + 3)
+			.addEventListener('click', function() {alert(i)})
+		}
+		.
+		.
+		for(let i = 6) {
+			// 因为 i < 6 不成立，所以这里什么也没有
+		}
+		// 和上面同样的情况，但是因为 let 声明的是块级作用域，以第一个 let i = 1 为例，也就是说在大括号内部的 let i = 1 对于内部来说是私有的，或者说是封闭的，这个时候再 alert(i)， 这个 i 指向的就是大括号内部的 i ，也就是 1， 而不会是最终的 外部的 i。换句话说，这个时候每个 function() {alert(i)} 中的 i 对应的就是 let i 的值，因为 i 的值是被封闭在大括号内的。
+
+
 	</script>
 </head>
 <body>
