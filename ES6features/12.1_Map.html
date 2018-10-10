@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>12.1_Map</title>
+	<script type="text/javascript">
+		// Map + Set + WeakMap + WeakSet
+		// 这些都是常见算法的高效数据结构。WeakMap 提供 leak-free object-key’d side tables.
+		var m = new Map();
+		m.set("hello", 42);
+		m.set(s, 34);
+		m.get(s) == 34;
+
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
+		// Map 对象是一个简单的 key/value map。任何值（对象和原始类型值）都可以用作键或者值。
+
+		// # 语法
+		new Map([iterable])
+
+			// ## 参数
+			// iterable
+			// Iterable 是一个 Array 或者其他 iterable 对象，这个 iterable 的元素是 key-value。每一个键值对都会被添加到 new Map。null 被认为是 undefined。
+
+		// # 描述
+			// ## key equality
+			// key equality 基于同值算法：NaN 被认为是和 NaN相同（尽管 NaN !== NaN），任何其他值，根据 === 操作符的语法相等的，都被认为是相等。在 ES6 早期版本的草案中，-0 和 +0被认为是不同的，尽管 -0 = +0，后来的版本中，这个改掉了。
+
+			// ## Objects and Map compared
+			// Objects 类似于 Map，因为他们都让你来给值设置一个键，获取一个值，删除一个键，并且检测某些内容是否存储在键中。鉴于此（也因为没有其他的内置替代形式），Objects 一直以来都被用作 Map；然而，Objects 和 Maps 之间有巨大的差别，这种差别使得 Map 更加好用：
+			// 1. Object 拥有 prototype，所以 map 中有一些默认的 keys。从 ES5 开始，我们可以通过使用 map = Object.create(null) 来绕开这些默认 keys，但是几乎不会这么做。
+			// 2. The keys of an Object are Strings and Symbols, where they can be any value for a Map.
+			// 3. You can get the size of a Map easily while you have to manually keep track of size for an Object.
+
+			// 这也不意味着你可以到处使用 Maps，大多数情况下我们还是会使用 Objects。Map 实例只在 collections 方面比较有用，你可以考虑改写你之前用 Objects 处理集合方面的代码。Objects 应当用于记录，拥有 fields and methods。
+			// 如果你依然无法确定使用哪个，你可以考虑尝试问自己下面的问题：
+			// 1. Are keys usually unknown until run time, do you need to look them up dynamically?
+			// 2. Do all values have the same type, and can be used interchangeably?
+			// 3. Do you need keys that aren't strings?
+			// 4. Are key-value pairs often added or removed?
+			// 5. Do you have an arbitrary (easily changing) amount of key-value pairs?
+			// 6. Is the collection iterated?
+	</script>
+</head>
+<body>
+</body>
+</html>

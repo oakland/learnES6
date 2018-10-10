@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>11.1_moduleLoaders</title>
+	<script type="text/javascript">
+		// module loaders 支持：
+		// - Dynamic loading
+		// - State isolation
+		// - Global namespace isolation
+		// - Compilation hooks
+		// - Nested virtualization
+
+		// 默认的模块加载器可以进行配置，也可以构建新的加载器，在孤立的或者受限的上下文中来评估和载入代码。
+		// Dynamic loading – ‘System’ is default loader
+		System.import('lib/math').then(function(m) {
+		  alert("2π = " + m.sum(m.pi, m.pi));
+		});
+
+		// Create execution sandboxes – new Loaders
+		var loader = new Loader({
+		  global: fixup(window) // replace ‘console.log’
+		});
+		loader.eval("console.log('hello world!');");
+
+		// Directly manipulate module cache
+		System.get('jquery');
+		System.set('jquery', Module({$: $})); // WARNING: not yet finalized
+	</script>
+</head>
+<body>
+</body>
+</html>
